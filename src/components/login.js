@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
@@ -22,25 +22,44 @@ import {
 
 function login() {
   const [error, setError] = useState("");
-
-  const [emailTouched, setEmailTouched] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailFocus, setEmailFocus] = useState(false);
   const [password, setPassword] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [toggle, setToggle] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
   const handlePasswordToggle = () => {
     setToggle(!toggle);
   };
 
+  const handleFocusEmail = () => {
+    setEmailFocus(true);
+  };
+  useEffect(() => {
+    if (emailFocus) setError("Email is required");
+  }, [emailFocus]);
+
+  const handlePasswordFocus = () => {
+    setPasswordFocus(true);
+  };
+
+  useEffect(() => {
+    if (passwordFocus) setErrorPassword("Password  is required");
+  }, [passwordFocus]);
+
   const emailChange = (e) => {
-    setEmailTouched(true);
+    setEmailTouched(false);
     let temp = e.target.value;
+    setEmail(temp);
+    if (temp > 0) setEmailFocus(false);
     temp = temp.toLowerCase();
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     console.log(regex.test(temp), temp);
-    if (temp.length == 0 && emailTouched == true) setError("Email is required");
+
+    if (temp.length == 0) setError("Email is required");
     else {
       if (!regex.test(temp)) {
         setError("Email must be valid");
@@ -51,9 +70,11 @@ function login() {
 
   const passwordChange = (e) => {
     let pass = e.target.value;
+    setPassword(pass);
+    if (pass > 0) setPasswordFocus(false);
     setPasswordTouched(true);
-    if (pass.length == 0 && passwordTouched == true)
-      setErrorPassword("Password is required");
+    if (pass.length == 0) setErrorPassword("Password is required");
+    else setErrorPassword("");
   };
 
   return (
@@ -85,8 +106,10 @@ function login() {
                 marginBottom: 2,
                 "& .MuiFormHelperText-root": { color: "red" },
               }}
+              value={email}
               id="email"
               helperText={error}
+              onFocus={handleFocusEmail}
             />
             <InputLabel sx={{ fontSize: 13, color: "black" }}>
               Password
@@ -94,6 +117,8 @@ function login() {
             <TextField
               type={toggle ? "password" : "text"}
               onChange={passwordChange}
+              value={password}
+              onFocus={handlePasswordFocus}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

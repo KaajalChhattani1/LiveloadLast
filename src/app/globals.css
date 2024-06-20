@@ -1,0 +1,12 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+.div {
+  background-image: url("/assests/Banner.webp");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}

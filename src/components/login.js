@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
@@ -15,6 +16,8 @@ import {
   InputLabel,
   Link,
   Paper,
+  Snackbar,
+  SnackbarContent,
   Stack,
   TextField,
   Typography,
@@ -30,6 +33,18 @@ function login() {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    if (email.length > 0 && password.length > 0) {
+      if (email != "kaajalchhattani@gmail.com" && password != "Kaajal@05") {
+        setOpen(true);
+      }
+    }
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handlePasswordToggle = () => {
     setToggle(!toggle);
@@ -45,6 +60,19 @@ function login() {
   const handlePasswordFocus = () => {
     setPasswordFocus(true);
   };
+
+  const action = (
+    <>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </>
+  );
 
   useEffect(() => {
     if (passwordFocus) setErrorPassword("Password  is required");
@@ -156,9 +184,23 @@ function login() {
                 color: "whitesmoke",
                 height: 40,
               }}
+              onClick={handleLoginClick}
             >
               Login
             </Button>
+            <Snackbar
+              open={open}
+              onClose={handleClose}
+              autoHideDuration={1200}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              key={{ vertical: "top", horizontal: "right" }}
+              action={action}
+            >
+              <SnackbarContent
+                sx={{ backgroundColor: "white", color: "black" }}
+                message="Required email or password is wrong"
+              />
+            </Snackbar>
           </Stack>
         </Grid>
       </Grid>

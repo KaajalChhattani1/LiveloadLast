@@ -59,7 +59,7 @@ function login() {
     console.log(open);
     if (response.message != "success") {
       setOpen(true);
-    } else router.push("http://localhost:3000/mainPage");
+    } else router.push("/mainPage");
   };
 
   const handleClose = () => {

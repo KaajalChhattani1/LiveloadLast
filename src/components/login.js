@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -22,26 +23,87 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 function login() {
+  const router = useRouter();
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("admin@liveload.com");
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("User@123");
   const [errorPassword, setErrorPassword] = useState("");
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const handleLoginClick = () => {
-    if (email.length > 0 && password.length > 0) {
-      if (email != "kaajalchhattani@gmail.com" && password != "Kaajal@05") {
-        setOpen(true);
+  // const action = (
+  //   <>
+  //     <IconButton
+  //       size="small"
+  //       aria-label="close"
+  //       color="inherit"
+  //       onClick={handleClose}
+  //     >
+  //       <CloseIcon fontSize="small" />
+  //     </IconButton>
+  //   </>
+  // );
+
+  // const verification = async () => {
+  //   await fetch("https://liveload-api.vercel.app/api/v1/login")
+  //     .then((response) => {
+  //       response.json;
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //     });
+  // };
+  // verification();
+  // const payload = await fetch(
+  //   "http://liveload-api.vercel.app/api/v1/login",
+  //   {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json/x-www-form-urlencoded",
+  //       Origin: "http://localhost:3000",
+  //     },
+  //     body: JSON.stringify({
+  //       username: "example_user",
+  //       password: "example_password",
+  //     }),
+  //   }
+  // );
+  const verification = async () => {
+    const payload = await fetch(
+      "https://liveload-api.vercel.app/api/v1/login",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+        }),
+        redirect: "follow",
       }
-    }
+    );
+
+    let response = await payload.json();
+    console.log(response.message);
+    setMessage(response.message);
+    console.log(open);
+    if (response.message != "success") {
+      setOpen(true);
+    } else router.push("http://localhost:3000/mainPage");
   };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -54,28 +116,16 @@ function login() {
     setEmailFocus(true);
   };
   useEffect(() => {
-    if (emailFocus) setError("Email is required");
+    if (emailFocus && email.length == 0) setError("Email is required");
   }, [emailFocus]);
 
   const handlePasswordFocus = () => {
     setPasswordFocus(true);
   };
 
-  const action = (
-    <>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </>
-  );
-
   useEffect(() => {
-    if (passwordFocus) setErrorPassword("Password  is required");
+    if (passwordFocus && password.length == 0)
+      setErrorPassword("Password  is required");
   }, [passwordFocus]);
 
   const emailChange = (e) => {
@@ -84,6 +134,7 @@ function login() {
     setEmail(temp);
     if (temp > 0) setEmailFocus(false);
     temp = temp.toLowerCase();
+    setEmail(temp);
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     console.log(regex.test(temp), temp);
 
@@ -184,17 +235,18 @@ function login() {
                 color: "whitesmoke",
                 height: 40,
               }}
-              onClick={handleLoginClick}
+              onClick={!error && !errorPassword ? verification : null}
             >
               Login
             </Button>
+
             <Snackbar
               open={open}
               onClose={handleClose}
-              autoHideDuration={1200}
+              autoHideDuration={1400}
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               key={{ vertical: "top", horizontal: "right" }}
-              action={action}
+              // action={action}
             >
               <SnackbarContent
                 sx={{ backgroundColor: "white", color: "black" }}

@@ -5,14 +5,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloseIcon from "@mui/icons-material/Close";
 import {
-  Box,
   Button,
-  Card,
-  CardActions,
-  FormControlLabel,
   Grid,
   IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   Link,
@@ -24,59 +19,22 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 function login() {
   const router = useRouter();
-  const [message, setMessage] = useState("");
+  // const queryClient=new QueryClient()
   const [error, setError] = useState("");
   const [email, setEmail] = useState("admin@liveload.com");
-  const [emailTouched, setEmailTouched] = useState(false);
+
   const [emailFocus, setEmailFocus] = useState(false);
   const [password, setPassword] = useState("User@123");
   const [errorPassword, setErrorPassword] = useState("");
-  const [passwordTouched, setPasswordTouched] = useState(false);
+
   const [toggle, setToggle] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // const action = (
-  //   <>
-  //     <IconButton
-  //       size="small"
-  //       aria-label="close"
-  //       color="inherit"
-  //       onClick={handleClose}
-  //     >
-  //       <CloseIcon fontSize="small" />
-  //     </IconButton>
-  //   </>
-  // );
-
-  // const verification = async () => {
-  //   await fetch("https://liveload-api.vercel.app/api/v1/login")
-  //     .then((response) => {
-  //       response.json;
-  //     })
-  //     .then((data) => {
-  //       console.log(data);
-  //     });
-  // };
-  // verification();
-  // const payload = await fetch(
-  //   "http://liveload-api.vercel.app/api/v1/login",
-  //   {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json/x-www-form-urlencoded",
-  //       Origin: "http://localhost:3000",
-  //     },
-  //     body: JSON.stringify({
-  //       username: "example_user",
-  //       password: "example_password",
-  //     }),
-  //   }
-  // );
   const verification = async () => {
     const payload = await fetch(
       "https://liveload-api.vercel.app/api/v1/login",
@@ -97,7 +55,7 @@ function login() {
 
     let response = await payload.json();
     console.log(response.message);
-    setMessage(response.message);
+
     console.log(open);
     if (response.message != "success") {
       setOpen(true);
@@ -129,7 +87,6 @@ function login() {
   }, [passwordFocus]);
 
   const emailChange = (e) => {
-    setEmailTouched(false);
     let temp = e.target.value;
     setEmail(temp);
     if (temp > 0) setEmailFocus(false);
@@ -144,19 +101,19 @@ function login() {
         setError("Email must be valid");
       } else setError("");
     }
-    console.log(regex.test(temp), error);
   };
 
   const passwordChange = (e) => {
     let pass = e.target.value;
     setPassword(pass);
     if (pass > 0) setPasswordFocus(false);
-    setPasswordTouched(true);
+
     if (pass.length == 0) setErrorPassword("Password is required");
     else setErrorPassword("");
   };
 
   return (
+    // <QueryClientProvider>
     <Paper sx={{ margin: "auto", maxWidth: 370, padding: 2 }}>
       <Grid container spacing={5}>
         <Grid item xs spacing={5}>
@@ -184,6 +141,17 @@ function login() {
               sx={{
                 marginBottom: 2,
                 "& .MuiFormHelperText-root": { color: "red" },
+
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: error ? "red" : "inherit",
+                  },
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: error ? "red" : "inherit",
+                  },
+                },
               }}
               value={email}
               id="email"
@@ -214,6 +182,16 @@ function login() {
               sx={{
                 marginBottom: 2,
                 "& .MuiFormHelperText-root": { color: "red" },
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: errorPassword ? "red" : "inherit",
+                  },
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: errorPassword ? "red" : "inherit",
+                  },
+                },
               }}
               helperText={errorPassword}
             />
@@ -257,6 +235,7 @@ function login() {
         </Grid>
       </Grid>
     </Paper>
+    // </QueryCientProvider>
   );
 }
 
